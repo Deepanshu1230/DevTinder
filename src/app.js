@@ -3,21 +3,54 @@ const express=require("express");
 const app=express();
 
  
+///Multiple route handler
+app.use("/user",[(req,res,next)=>{
+    console.log("Route Handler1");
+    // res.send("Route handler 1");
+    next();
+    
+}, 
+(req,res,next)=>{
+    console.log("Route 2");
+    // res.send("Route Hanlder 2");
+    next();
+},
+
+(req,res,next)=>{
+    console.log("Route 3");
+    // res.send("Route Hanlder 3");
+    next();
+},
+
+(req,res,next)=>{
+    console.log("Route 4");
+    res.send("Route Hanlder 4");
+}
+]);
+
+
+
+
+
+
+
+
+
 
 //Here ac and abc will work
-app.get("/user/:userid/:Password/:name",(req,res)=>{
-    console.log(req.params);
-    res.send({firstname:"lucky",
-        lastname:"Yadav"
-    })
-})
+// app.get("/user/:userid/:Password/:name",(req,res)=>{
+//     console.log(req.params);
+//     res.send({firstname:"lucky",
+//         lastname:"Yadav"
+//     })
+// })
 
 //This is regex if you write like {car ,aihd,ajkbk} a should be included
-app.get(/a/,(req,res)=>{
-    res.send({firstname:"lucky",
-        lastname:"Yadav"
-    })
-})
+// app.get(/a/,(req,res)=>{
+//     res.send({firstname:"lucky",
+//         lastname:"Yadav"
+//     })
+// })
 
 
 // app.use("/hello/2" ,(req,res)=>{
