@@ -1,57 +1,136 @@
 const express=require("express");
-
+const connectDb=require("./config/dataBase");
 const app=express();
-const { adminAuth, userAuth }=require("./middlewares/auth");
+const User=require("./models/user");
 
-app.use("/admin",adminAuth);
+app.post("/signup",async (req,res)=>{
+    //This is the instance of the user model
+    const UserInfo= new User({
+        firstName:"Nehaal",
+        lastName:"kohli",
+        emailId:"nehal123@gamil.com",
+        age:"20",
+        
 
+    })
 
-app.get("/user",userAuth,(req,res)=>{
-    res.send("User Data Sent");
+    try{
+        await UserInfo.save();
+    res.send("User Succesfully Sent the data");
+
+    }
+    catch(err){
+        res.status(401).send("Error handling :",err.message);
+
+    }
+
+    
+})
+
+connectDb().then(()=>{
+    console.log("Database Connection established...");
+    app.listen(3000,()=>{
+    console.log("Server is successfully listening the port 3000..")
 });
-
-app.get("/user/login",(req,res)=>{
-    res.send("User login Sent");
-});
-
-app.use("/admin/deletedata",(req,res)=>{
-    res.send("Deleted User Data");
-});
+}).catch((err)=>{
+    console.log("Database Cannot be connected...");
+})
 
 
-app.get("/admin/data",(req,res)=>{
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// app.use("/user",(req,res)=>{
+    // try{
+        // throw new error("Error Found");
+        // res.send("User data Sent");
+
+    // }
+    // catch(err){
+    //     res.status(500).send("Something went Wrong Try again");
+
+    // }   
+// });
+
+// app.use("/",(err,req,res,next)=>{
+//     if(err){
+        //log your Error
+//         res.status(500).send("Something Went Wrong");
+//     }
+// });
+
+/////////// ----MiddleWare-Auth-Creating-------   //////////
+// const { adminAuth, userAuth }=require("./middlewares/auth");
+
+// app.use("/admin",adminAuth);
+
+
+// app.get("/user",userAuth,(req,res)=>{
+//     res.send("User Data Sent");
+// });
+
+// app.get("/user/login",(req,res)=>{
+//     res.send("User login Sent");
+// });
+
+// app.use("/admin/deletedata",(req,res)=>{
+//     res.send("Deleted User Data");
+// });
+
+
+// app.get("/admin/data",(req,res)=>{
 
     //we need to check if the data is Authorized or not
    
    
     //no 2 data can be defined in single request handler
-    res.send("This is the Admins Data");
+    // res.send("This is the Admins Data");
 
-});
+// });
 
-
-
-
+////////////***************************************** */////////////////
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+////////////------Request route Handler-------///////////
 
 //IT Get the /users => Check app.xxx from line by line
 //We can also make separate
@@ -73,19 +152,10 @@ app.get("/admin/data",(req,res)=>{
 //  }
 // );
 
+/////////************************************////////
 
 
-
-
-
-
-
-
-
-
-
-
-
+/////////--------Route Handling------/////////
 //This is the one way of creating the route handler
 
 // app.get("/user",[(req,res,next)=>{
@@ -97,23 +167,9 @@ app.get("/admin/data",(req,res)=>{
 //     res.send("Route 2");
 // });
 
+///////*************************************///////
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-///Multiple route handler
+//////////----------Multiple route handler------------////////
 // app.use("/user",[(req,res,next)=>{
 //     console.log("Route Handler1");
 //     // res.send("Route handler 1");
@@ -138,13 +194,7 @@ app.get("/admin/data",(req,res)=>{
 // }
 // ]);
 
-
-
-
-
-
-
-
+//////****************************///////////
 
 
 //Here ac and abc will work
@@ -199,6 +249,3 @@ app.get("/admin/data",(req,res)=>{
 // }); 
 
 
-app.listen(3000,()=>{
-    console.log("Server is successfully listening the port 3000..")
-});
