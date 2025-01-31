@@ -5,24 +5,67 @@ const User=require("./models/user");
 
 app.use(express.json());
 
-app.post("/signup",async (req,res)=>{
-
-    // console.log(req.body);
-    //This is the instance of the user model
-    const UserInfo= new User(req.body);
-
+//Getting the EmailId
+app.get("/user", async (req,res)=>{
+    const userEmail=req.body.emailId;
+    
     try{
-        await UserInfo.save();
-    res.send("User Succesfully Sent the data");
+       const user=await User.findOne({emailId:userEmail});
+       if(!user ||  user.length === 0){
+        res.status(404).send("Unable to find the Data")
+       }
+       else{
+        res.send(user);
 
+       }
+       
     }
     catch(err){
-        res.status(401).send("Error handling :",err.message);
+        res.status(401).send("Facig Some Error:",err);
 
     }
+   
 
+})
+
+//FEED-all the  user will be get by API from database
+app.get("/feed", async (req,res)=>{
+    try{
+      const user=await User.find({});
+      if(user.length ===0){
+        res.status(404).send("Unable to find the Data")
+       }
+       else{
+        res.send(user);
+
+       }
+       
+    }
+    catch(err){
+        res.status(401).send("Facig Some Error:",err);
+
+    }
     
 })
+
+// app.post("/signup",async (req,res)=>{
+
+//     // console.log(req.body);
+//     //This is the instance of the user model
+//     const UserInfo= new User(req.body);
+
+//     try{
+//         await UserInfo.save();
+//     res.send("User Succesfully Sent the data");
+
+//     }
+//     catch(err){
+//         res.status(401).send("Error handling :",err.message);
+
+//     }
+
+    
+// })
 
 connectDb().then(()=>{
     console.log("Database Connection established...");
@@ -31,7 +74,7 @@ connectDb().then(()=>{
 });
 }).catch((err)=>{
     console.log("Database Cannot be connected...");
-})
+});
 
 
 
