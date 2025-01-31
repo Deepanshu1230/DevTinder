@@ -3,16 +3,13 @@ const connectDb=require("./config/dataBase");
 const app=express();
 const User=require("./models/user");
 
-app.post("/signup",async (req,res)=>{
-    //This is the instance of the user model
-    const UserInfo= new User({
-        firstName:"Nehaal",
-        lastName:"kohli",
-        emailId:"nehal123@gamil.com",
-        age:"20",
-        
+app.use(express.json());
 
-    })
+app.post("/signup",async (req,res)=>{
+
+    // console.log(req.body);
+    //This is the instance of the user model
+    const UserInfo= new User(req.body);
 
     try{
         await UserInfo.save();
