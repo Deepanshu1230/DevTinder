@@ -6,47 +6,89 @@ const User=require("./models/user");
 app.use(express.json());
 
 //Getting the EmailId
-app.get("/user", async (req,res)=>{
-    const userEmail=req.body.emailId;
+// app.get("/user", async (req,res)=>{
+//     const userEmail=req.body.emailId;
     
-    try{
-       const user=await User.findOne({emailId:userEmail});
-       if(!user ||  user.length === 0){
-        res.status(404).send("Unable to find the Data")
-       }
-       else{
-        res.send(user);
+//     try{
+//        const user=await User.findOne({emailId:userEmail});
+//        if(!user ||  user.length === 0){
+//         res.status(404).send("Unable to find the Data")
+//        }
+//        else{
+//         res.send(user);
 
-       }
+//        }
        
-    }
-    catch(err){
-        res.status(401).send("Facig Some Error:",err);
+//     }
+//     catch(err){
+//         res.status(401).send("Facig Some Error:",err);
 
-    }
+//     }
    
 
-})
+// });
 
 //FEED-all the  user will be get by API from database
-app.get("/feed", async (req,res)=>{
-    try{
-      const user=await User.find({});
-      if(user.length ===0){
-        res.status(404).send("Unable to find the Data")
-       }
-       else{
-        res.send(user);
+// app.get("/feed", async (req,res)=>{
+//     try{
+//       const user=await User.find({});
+//       if(user.length ===0){
+//         res.status(404).send("Unable to find the Data")
+//        }
+//        else{
+//         res.send(user);
 
-       }
+//        }
        
-    }
-    catch(err){
-        res.status(401).send("Facig Some Error:",err);
+//     }
+//     catch(err){
+//         res.status(401).send("Facig Some Error:",err);
 
-    }
+//     }
     
-})
+// });
+
+
+//Deleting using the findidnaddelete
+// app.delete("/user", async (req,res)=>{
+//     const UserId=req.body.UserId;
+
+//     try{
+//         // await User.findByIdAndDelete({_id:UserId});
+//         await User.findByIdAndDelete(UserId);
+//         if(!UserId){
+//             res.status(401).send("Send Coreect user Id")
+//         }
+//         else{
+//             res.send("Data Deleted Successfully");
+
+//         }
+        
+
+//     }
+//     catch(err){
+//         res.status(401).send("Unable to see the data",err.message);
+
+//     }
+// })
+
+//Updating the existing User
+app.patch("/user", async (req,res)=>{
+    const UserId=req.body.userId;
+     const data=req.body;
+try{
+   const output = await User.findByIdAndUpdate(UserId,data,{returnDocument:"before"});
+   console.log(output);
+
+   res.send("Data Updated Succesfully");
+
+}
+catch(err){
+    res.status(401).send("Enable to update the User");
+}
+
+});
+
 
 // app.post("/signup",async (req,res)=>{
 
