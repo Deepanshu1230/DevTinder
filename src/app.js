@@ -1,7 +1,10 @@
 const express=require("express");
 const connectDb=require("./config/dataBase");
 const app=express();
+const bcrypt=require("bcrypt");
 const User=require("./models/user");
+const Validator=require("./utils/validator");
+const validator=require("validator");
 
 app.use(express.json());
 
@@ -11,7 +14,7 @@ app.post("/signup",async (req,res)=>{
 
     // console.log(req.body);
     //This is the instance of the user model
-    const UserInfo=new User(req.body);
+    
 
     try{
 
@@ -19,6 +22,28 @@ app.post("/signup",async (req,res)=>{
         //     throw new Error("Skills Size Exceeded");
 
         // }
+
+        //validation of Data
+        Validator(req);
+
+         const {firstName,lastName,emailId,password}=req.body;
+        //Encrypting the Password
+        const passwordhash=await bcrypt.hash(password,10);
+        console.log(passwordhash);
+
+
+
+
+
+
+
+
+        const UserInfo=new User({
+            firstName,
+            lastName,
+            emailId,
+            password:passwordhash,
+        });
         await UserInfo.save();
 
         res.send("User Succesfully Sent the data");
@@ -33,6 +58,54 @@ app.post("/signup",async (req,res)=>{
     }
 
     
+})
+
+
+app.post("/login", async (req,res)=>{
+
+
+
+    try{
+        const {emailId,password}=req.body;
+
+        // if(!validator.isEmail(emailId)){
+        //     throw new Error("Enter valid emailId");
+    
+        // }
+    
+    
+        const user=await User.findOne({emailId:emailId});
+    
+        
+        if(!user){
+            throw new Error("Invalid Credentials");
+        }
+    
+        const IsvalidPassword=await bcrypt.compare(password,user.password);
+        if(IsvalidPassword){
+            res.send("Login succesfully");
+    
+        }
+        else{
+            throw new Error("Invalid Credentials");
+        }
+
+    }
+    catch(err){
+        
+           
+            res.status(400).send("Error handling :" + err.message);
+    
+        
+    
+
+    }
+   
+
+
+
+
+
 })
 
 
