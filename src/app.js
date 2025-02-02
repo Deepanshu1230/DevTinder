@@ -14,6 +14,11 @@ app.post("/signup",async (req,res)=>{
     const UserInfo=new User(req.body);
 
     try{
+
+        // if(UserInfo?.skills.length >5){
+        //     throw new Error("Skills Size Exceeded");
+
+        // }
         await UserInfo.save();
 
         res.send("User Succesfully Sent the data");
@@ -100,11 +105,30 @@ app.delete("/user", async (req,res)=>{
 })
 
 //Updating the existing User
-app.patch("/user", async (req,res)=>{
-    const UserId=req.body.userId;
-     const data=req.body;
+app.patch("/user/:userId", async (req,res)=>{
+    
 try{
-   const output = await User.findByIdAndUpdate(UserId,data,
+
+    const userId=req.params?.userId;
+     const data=req.body;
+
+    const ALLOWED_DATA=[
+        "about",
+        "photoUrl",
+        "skills",
+        
+    ];
+
+    const IS_allowed= Object.keys(data).every((k)=>
+        ALLOWED_DATA.includes(k)
+    )
+
+    if(!IS_allowed){
+        throw new Error("Cannot update not allowed");
+
+    }
+
+   const output = await User.findByIdAndUpdate(userId,data,
     {returnDocument:"before",
         runValidators:true,
     }
