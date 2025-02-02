@@ -1,6 +1,6 @@
 
 const mongoose=require("mongoose");
-
+const validator=require("validator");
 const UserSchema= new  mongoose.Schema({
     firstName:{
         type:String,
@@ -24,12 +24,25 @@ const UserSchema= new  mongoose.Schema({
         lowercase:true,
         trim:true,
         validate(value){
-            if( !value.includes("@gmail.com") || !value.endsWith("@gmail.com")){
-                throw new Error();
+            if(!validator.isEmail(value)){
+                throw new Error("Invalid email Address:"+value);
             }
-        }
+
+    }
+        
         
     },
+
+    password:{
+        type:String,
+        required:true,
+        validate(value){
+            if(!validator.isStrongPassword(value)){
+                throw new Error("Enter strong password:"+value);
+            }
+        }
+    },
+
     age:{
         type:Number,
         min:18,
@@ -46,7 +59,12 @@ const UserSchema= new  mongoose.Schema({
     },
     photoUrl:{
         type:String,
-        default:"https://www.pnrao.com/wp-content/uploads/2023/06/dummy-user-male.jpg"
+        // default:"https://www.pnrao.com/wp-content/uploads/2023/06/dummy-user-male.jpg"
+        validate(value){
+            if(!validator.isURL(value)){
+                throw new Error("Invalid URL:"+value);
+            }
+        }
     },
     about:{
         type:String,
