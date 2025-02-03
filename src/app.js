@@ -5,8 +5,12 @@ const bcrypt=require("bcrypt");
 const User=require("./models/user");
 const Validator=require("./utils/validator");
 const validator=require("validator");
+const cookieParser=require("cookie-parser");
+const jwt=require("jsonwebtoken");
+const {userAuth}=require("./middlewares/auth");
 
 app.use(express.json());
+app.use(cookieParser());
 
 
 
@@ -82,7 +86,19 @@ app.post("/login", async (req,res)=>{
         }
     
         const IsvalidPassword=await bcrypt.compare(password,user.password);
+       
+
         if(IsvalidPassword){
+            //Create JWT Token
+            const token=await jwt.sign({_id:user._id},"DevTinder@123",{expiresIn:"1d"});
+            console.log(token);
+
+            //Add the Token to the Cookie and sent back to user
+            res.cookie("token",token);
+
+
+
+
             res.send("Login succesfully");
     
         }
@@ -108,115 +124,159 @@ app.post("/login", async (req,res)=>{
 
 })
 
+app.get("/profile",userAuth,async (req,res)=>{
+
+
+    try{
+       
+        const user=req.UserInfo;
+
+
+    // const decodedValue=await jwt.verify(token,"DevTinder@123");
+
+    // console.log(decodedValue);
+    
+    // const {_id}=decodedValue;
+    
+    // console.log("LoggedIn User Info:"+_id);
+
+    // const ProfileUser=await User.findById(_id);
+    
+    // if(!ProfileUser){
+    //     throw new Error("User Doesnot Exist");
+    // }
+
+    res.send(user);
+
+
+    
+}
+    catch(err){
+
+        res.status(400).send("Error handling :" + err.message);
+
+    }
+
+    
+})
+
+app.post("/sentConnectionRequest",userAuth,(req,res)=>{
+
+    const user=req.UserInfo;
+    console.log("REquest sent ");
+
+    res.send(user.firstName +" sent Connection Request Sent...")
+})
+
 
 
 //Getting the EmailId
-app.get("/user", async (req,res)=>{
-    const userEmail=req.body.emailId;
+// app.get("/user", async (req,res)=>{
+//     const userEmail=req.body.emailId;
     
-    try{
-       const user=await User.findOne({emailId:userEmail});
-       if(!user ||  user.length === 0){
-        res.status(404).send("Unable to find the Data")
-       }
-       else{
-        res.send(user);
+//     try{
+//        const user=await User.findOne({emailId:userEmail});
+//        if(!user ||  user.length === 0){
+//         res.status(404).send("Unable to find the Data")
+//        }
+//        else{
+//         res.send(user);
 
-       }
+//        }
        
-    }
-    catch(err){
-        res.status(401).send("Facig Some Error:",err);
+//     }
+//     catch(err){
+//         res.status(401).send("Facig Some Error:",err);
 
-    }
+//     }
    
 
-});
+// });
 
 //FEED-all the  user will be get by API from database
-app.get("/feed", async (req,res)=>{
-    try{
-      const user=await User.find({});
-      if(user.length ===0){
-        res.status(404).send("Unable to find the Data")
-       }
-       else{
-        res.send(user);
+// app.get("/feed", async (req,res)=>{
+//     try{
+//       const user=await User.find({});
+//       if(user.length ===0){
+//         res.status(404).send("Unable to find the Data")
+//        }
+//        else{
+//         res.send(user);
 
-       }
+//        }
        
-    }
-    catch(err){
-        res.status(401).send("Facig Some Error:",err);
+//     }
+//     catch(err){
+//         res.status(401).send("Facig Some Error:",err);
 
-    }
+//     }
     
-});
+// });
 
 
 //Deleting using the findidnaddelete
-app.delete("/user", async (req,res)=>{
-    const UserId=req.body.UserId;
+// app.delete("/user", async (req,res)=>{
+//     const UserId=req.body.UserId;
 
-    try{
-        // await User.findByIdAndDelete({_id:UserId});
-        await User.findByIdAndDelete(UserId);
-        if(!UserId){
-            res.status(401).send("Send Coreect user Id")
-        }
-        else{
-            res.send("Data Deleted Successfully");
+//     try{
+//         // await User.findByIdAndDelete({_id:UserId});
+//         await User.findByIdAndDelete(UserId);
+//         if(!UserId){
+//             res.status(401).send("Send Coreect user Id")
+//         }
+//         else{
+//             res.send("Data Deleted Successfully");
 
-        }
+//         }
         
 
-    }
-    catch(err){
-        res.status(401).send("Unable to see the data",err.message);
+//     }
+//     catch(err){
+//         res.status(401).send("Unable to see the data",err.message);
 
-    }
-})
+//     }
+// })
 
 //Updating the existing User
-app.patch("/user/:userId", async (req,res)=>{
+// app.patch("/user/:userId", async (req,res)=>{
     
-try{
+// try{
 
-    const userId=req.params?.userId;
-     const data=req.body;
+//     const userId=req.params?.userId;
+//      const data=req.body;
 
-    const ALLOWED_DATA=[
-        "about",
-        "photoUrl",
-        "skills",
+//     const ALLOWED_DATA=[
+//         "about",
+//         "photoUrl",
+//         "skills",
         
-    ];
+//     ];
 
-    const IS_allowed= Object.keys(data).every((k)=>
-        ALLOWED_DATA.includes(k)
-    )
+//     const IS_allowed= Object.keys(data).every((k)=>
+//         ALLOWED_DATA.includes(k)
+//     )
 
-    if(!IS_allowed){
-        throw new Error("Cannot update not allowed");
+//     if(!IS_allowed){
+//         throw new Error("Cannot update not allowed");
 
-    }
+//     }
 
-   const output = await User.findByIdAndUpdate(userId,data,
-    {returnDocument:"before",
-        runValidators:true,
-    }
+//    const output = await User.findByIdAndUpdate(userId,data,
+//     {returnDocument:"before",
+//         runValidators:true,
+//     }
     
-);
-   console.log(output);
+// );
+//    console.log(output);
 
-   res.send("Data Updated Succesfully");
+//    res.send("Data Updated Succesfully");
 
-}
-catch(err){
-    res.status(401).send("Enable to update the User"+ err.message);
-}
+// }
+// catch(err){
+//     res.status(401).send("Enable to update the User"+ err.message);
+// }
 
-});
+// });
 
 
 connectDb().then(()=>{
