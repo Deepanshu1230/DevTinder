@@ -1,172 +1,28 @@
 const express=require("express");
 const connectDb=require("./config/dataBase");
 const app=express();
-const bcrypt=require("bcrypt");
-const User=require("./models/user");
 const Validator=require("./utils/validator");
 const validator=require("validator");
 const cookieParser=require("cookie-parser");
-const jwt=require("jsonwebtoken");
-const {userAuth}=require("./middlewares/auth");
+
+
 
 app.use(express.json());
 app.use(cookieParser());
 
 
-
-app.post("/signup",async (req,res)=>{
-
-    // console.log(req.body);
-    //This is the instance of the user model
-    
-
-    try{
-
-        // if(UserInfo?.skills.length >5){
-        //     throw new Error("Skills Size Exceeded");
-
-        // }
-
-        //validation of Data
-        Validator(req);
-
-         const {firstName,lastName,emailId,password}=req.body;
-        //Encrypting the Password
-        const passwordhash=await bcrypt.hash(password,10);
-        console.log(passwordhash);
+const authRouter=require("./routers/Auth");
+const requestRouter=require("./routers/request");
+const profileRouter=require("./routers/profile");
 
 
 
+app.use("/",authRouter);
+app.use("/",requestRouter);
+app.use("/",profileRouter);
 
 
 
-
-
-        const UserInfo=new User({
-            firstName,
-            lastName,
-            emailId,
-            password:passwordhash,
-        });
-        await UserInfo.save();
-
-        res.send("User Succesfully Sent the data");
-
-    }
-    catch(err){
-        // if (err.code === 11000) {
-        //     return res.status(400).json({ error: "Email already exists" });
-        // }
-        res.status(400).send("Error handling :" + err.message);
-
-    }
-
-    
-})
-
-
-app.post("/login", async (req,res)=>{
-
-
-
-    try{
-        const {emailId,password}=req.body;
-
-        // if(!validator.isEmail(emailId)){
-        //     throw new Error("Enter valid emailId");
-    
-        // }
-    
-    
-        const user=await User.findOne({emailId:emailId});
-    
-        
-        if(!user){
-            throw new Error("Invalid Credentials");
-        }
-    
-        const IsvalidPassword=await user.ValidatePassword(password);
-       
-
-        if(IsvalidPassword){
-            //Create JWT Token
-            const token=await user.getJWT();
-            console.log(token);
-
-            //Add the Token to the Cookie and sent back to user
-            res.cookie("token",token);
-
-
-
-
-            res.send("Login succesfully");
-    
-        }
-        else{
-            throw new Error("Invalid Credentials");
-        }
-
-    }
-    catch(err){
-        
-           
-            res.status(400).send("Error handling :" + err.message);
-    
-        
-    
-
-    }
-   
-
-
-
-
-
-})
-
-app.get("/profile",userAuth,async (req,res)=>{
-
-
-    try{
-       
-        const user=req.UserInfo;
-
-
-    // const decodedValue=await jwt.verify(token,"DevTinder@123");
-
-    // console.log(decodedValue);
-    
-    // const {_id}=decodedValue;
-    
-    // console.log("LoggedIn User Info:"+_id);
-
-    // const ProfileUser=await User.findById(_id);
-    
-    // if(!ProfileUser){
-    //     throw new Error("User Doesnot Exist");
-    // }
-
-    res.send(user);
-
-
-    
-}
-    catch(err){
-
-        res.status(400).send("Error handling :" + err.message);
-
-    }
-
-    
-})
-
-app.post("/sentConnectionRequest",userAuth,(req,res)=>{
-
-    const user=req.UserInfo;
-    console.log("REquest sent ");
-
-    res.send(user.firstName +" sent Connection Request Sent...")
-})
 
 
 

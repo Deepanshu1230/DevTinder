@@ -15,4 +15,32 @@ const ValidatorSignup=(req)=>{
     }
 };
 
-module.exports=ValidatorSignup;
+const ValidateProfileEdit=(req)=>{
+
+    try{
+
+        const IsAllowedUpdate=["about","skills","photoUrl","emailId","age","gender"];
+
+    const User=req.body;
+
+    Object.keys(User).every((k)=>
+     IsAllowedUpdate.includes(k)
+    )
+
+    if(!IsAllowedUpdate){
+        throw new Error("Enter the Valdi Updation")
+    }
+
+    }
+    catch(err){
+        res.send("ERROR:" + err.message);
+    }
+    
+}
+
+module.exports={ 
+    ValidatorSignup,
+    ValidateProfileEdit
+
+
+};

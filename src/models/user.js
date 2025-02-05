@@ -4,7 +4,7 @@ const validator=require("validator");
 const bcrypt=require("bcrypt")
 
 const jwt=require("jsonwebtoken");
-const UserSchema= new  mongoose.Schema({
+const UserSchema= new mongoose.Schema({
     firstName:{
         type:String,
         required:true,
