@@ -24,6 +24,7 @@ const UserSchema= new mongoose.Schema({
         type:String,
         required:true,
         unique: true ,
+        index:true, 
         lowercase:true,
         trim:true,
         validate(value){
@@ -88,7 +89,12 @@ const UserSchema= new mongoose.Schema({
     }
 },{
     timestamps:true,
-})
+});
+
+
+UserSchema.index({firstName:1,lastName:1});
+UserSchema.index({age:1});
+
 
 UserSchema.methods.getJWT= async function (){
     const user=this;

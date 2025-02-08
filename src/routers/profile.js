@@ -1,7 +1,10 @@
 const express=require("express");
 const {userAuth}=require("../middlewares/auth");
 
-const { ValidateProfileEdit } =require("../utils/validator");
+const validator=require("validator");
+
+const { ValidateProfileEdit,ValidateProfilePassword } =require("../utils/validator");
+const bcrypt=require("bcrypt");
 
 const profileRouter=express.Router();
 
@@ -71,18 +74,52 @@ profileRouter.patch("/profile/edit",userAuth,async (req,res)=>{
 
     }
 
+});
 
+profileRouter.patch("/profile/edit/password",userAuth,async (req,res)=>{
+
+    try{
+      
+        const IsAllowed=["password"];
+    const ChangingPassword=req.body;
+
+    const IsValid= Object.keys(ChangingPassword).every((k)=>
+        IsAllowed.includes(k)
+
+    )
+
+    if(!IsValid){
+       throw new Error("Enter the valid details");
+    }
+ 
+    const userPassword=req.UserInfo;
+    
+    const { password } = ChangingPassword;
+    if (!password) {
+        return res.status(400).json({ message: "Password is required" });
+    }
+    
+    if (!validator.isStrongPassword(password)) {
+        return res.status(400).json({ message: "Enter a strong password" });
+    }
+
+    Object.keys(ChangingPassword).forEach((k)=> userPassword[k] = ChangingPassword[k] );
+
+   const Hashpassword=await bcrypt.hash(password, 10);
+   userPassword.password=Hashpassword;
+
+
+    await userPassword.save();
+
+    res.send("Password Changed");
+
+    }
+    catch(err){
+        res.status(400).send("ERROR:" +err.message);
+
+    }
 
     
-
-
-    
-
-
-
-
-
-
 
 });
 

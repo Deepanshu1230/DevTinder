@@ -1,5 +1,5 @@
 const express=require("express");
-const  Validator=require("../utils/validator");
+const {ValidatorSignup}=require("../utils/validator");
 const bcrypt=require("bcrypt");
 const User=require("../models/user");
 
@@ -25,7 +25,7 @@ authRouter.post("/signup",async (req,res)=>{
         // }
 
         //validation of Data
-        Validator(req);
+        ValidatorSignup(req);
 
          const {firstName,lastName,emailId,password}=req.body;
         //Encrypting the Password

@@ -38,9 +38,12 @@ const ValidateProfileEdit=(req)=>{
     
 }
 
+
+
 module.exports={ 
     ValidatorSignup,
-    ValidateProfileEdit
+    ValidateProfileEdit,
+   
 
 
 };
