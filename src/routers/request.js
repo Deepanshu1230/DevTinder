@@ -71,4 +71,51 @@ requestRouter.post("/request/send/:status/:TouserId",userAuth,async (req,res)=>{
   
 });
 
+
+requestRouter.post("/request/review/:status/:requestId",userAuth,async (req,res)=>{
+       
+  
+  try{
+
+    const LoggedIn=req.UserInfo;
+     const {status,requestId}=req.params;
+
+     const IsAllowed=["accepted","rejected"];
+     if(!IsAllowed.includes(status)){
+        return res.status(400).json({
+          message: `Valid Status Not Found`
+        })
+     }
+
+     const connectionRequest=await ConnectionRequestUser.findOne({
+      _id:requestId,
+      ToUserId:LoggedIn._id,
+      status:"interested"
+
+     });
+
+     if(!connectionRequest){
+        throw new Error("Connection Request Not found");
+     }
+
+     connectionRequest.status=status;
+
+     const data=await connectionRequest.save();
+     res.json({
+      message:`Connection Request `+status,
+      data
+     });
+
+
+     //Validate the loginUser=>ToUserID
+     //status => interested 
+     //we need to check the whether require exist or not 
+
+  }
+  catch(err){
+    res.status(400).send("ERROR:" + err.message);
+  }
+     
+});
+
 module.exports=requestRouter;

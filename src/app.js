@@ -14,12 +14,14 @@ app.use(cookieParser());
 const authRouter=require("./routers/Auth");
 const requestRouter=require("./routers/request");
 const profileRouter=require("./routers/profile");
+const userRouter=require("./routers/user");
 
 
 
 app.use("/",authRouter);
 app.use("/",requestRouter);
 app.use("/",profileRouter);
+app.use("/",userRouter);
 
 
 

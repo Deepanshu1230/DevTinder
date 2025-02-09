@@ -20,7 +20,7 @@
 
 
 ## UserAuth
- -Get /user/connection
+ -Get /user/connection/recieved
  -Get /request/recieved
  -Get /user/feed - gets you the profiles of other on platform
 
