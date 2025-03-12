@@ -1,37 +1,40 @@
-const express=require("express");
-const connectDb=require("./config/dataBase");
-const app=express();
-const Validator=require("./utils/validator");
-const validator=require("validator");
-const cookieParser=require("cookie-parser");
+const express = require("express");
+const connectDb = require("./config/dataBase");
+const app = express();
+const Validator = require("./utils/validator");
+const validator = require("validator");
+const cookieParser = require("cookie-parser");
+const cors = require("cors");
 
 
+
+require('dotenv').config()
+
+
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 app.use(cookieParser());
 
+const authRouter = require("./routers/Auth");
+const requestRouter = require("./routers/request");
+const profileRouter = require("./routers/profile");
+const userRouter = require("./routers/user");
 
-const authRouter=require("./routers/Auth");
-const requestRouter=require("./routers/request");
-const profileRouter=require("./routers/profile");
-const userRouter=require("./routers/user");
-
-
-
-app.use("/",authRouter);
-app.use("/",requestRouter);
-app.use("/",profileRouter);
-app.use("/",userRouter);
-
-
-
-
-
+app.use("/", authRouter);
+app.use("/", requestRouter);
+app.use("/", profileRouter);
+app.use("/", userRouter);
 
 //Getting the EmailId
 // app.get("/user", async (req,res)=>{
 //     const userEmail=req.body.emailId;
-    
+
 //     try{
 //        const user=await User.findOne({emailId:userEmail});
 //        if(!user ||  user.length === 0){
@@ -41,13 +44,12 @@ app.use("/",userRouter);
 //         res.send(user);
 
 //        }
-       
+
 //     }
 //     catch(err){
 //         res.status(401).send("Facig Some Error:",err);
 
 //     }
-   
 
 // });
 
@@ -62,15 +64,14 @@ app.use("/",userRouter);
 //         res.send(user);
 
 //        }
-       
+
 //     }
 //     catch(err){
 //         res.status(401).send("Facig Some Error:",err);
 
 //     }
-    
-// });
 
+// });
 
 //Deleting using the findidnaddelete
 // app.delete("/user", async (req,res)=>{
@@ -86,7 +87,6 @@ app.use("/",userRouter);
 //             res.send("Data Deleted Successfully");
 
 //         }
-        
 
 //     }
 //     catch(err){
@@ -97,7 +97,7 @@ app.use("/",userRouter);
 
 //Updating the existing User
 // app.patch("/user/:userId", async (req,res)=>{
-    
+
 // try{
 
 //     const userId=req.params?.userId;
@@ -107,7 +107,7 @@ app.use("/",userRouter);
 //         "about",
 //         "photoUrl",
 //         "skills",
-        
+
 //     ];
 
 //     const IS_allowed= Object.keys(data).every((k)=>
@@ -123,7 +123,7 @@ app.use("/",userRouter);
 //     {returnDocument:"before",
 //         runValidators:true,
 //     }
-    
+
 // );
 //    console.log(output);
 
@@ -136,74 +136,32 @@ app.use("/",userRouter);
 
 // });
 
-
-connectDb().then(()=>{
+connectDb()
+  .then(() => {
     console.log("Database Connection established...");
-    app.listen(3000,()=>{
-    console.log("Server is successfully listening the port 3000..")
-});
-}).catch((err)=>{
+    app.listen(process.env.PORT, () => {
+      console.log("Server is successfully listening the port 3000..");
+    });
+  })
+  .catch((err) => {
     console.log("Database Cannot be connected...");
-});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  });
 
 // app.use("/user",(req,res)=>{
-    // try{
-        // throw new error("Error Found");
-        // res.send("User data Sent");
+// try{
+// throw new error("Error Found");
+// res.send("User data Sent");
 
-    // }
-    // catch(err){
-    //     res.status(500).send("Something went Wrong Try again");
+// }
+// catch(err){
+//     res.status(500).send("Something went Wrong Try again");
 
-    // }   
+// }
 // });
 
 // app.use("/",(err,req,res,next)=>{
 //     if(err){
-        //log your Error
+//log your Error
 //         res.status(500).send("Something Went Wrong");
 //     }
 // });
@@ -212,7 +170,6 @@ connectDb().then(()=>{
 // const { adminAuth, userAuth }=require("./middlewares/auth");
 
 // app.use("/admin",adminAuth);
-
 
 // app.get("/user",userAuth,(req,res)=>{
 //     res.send("User Data Sent");
@@ -226,19 +183,16 @@ connectDb().then(()=>{
 //     res.send("Deleted User Data");
 // });
 
-
 // app.get("/admin/data",(req,res)=>{
 
-    //we need to check if the data is Authorized or not
-   
-   
-    //no 2 data can be defined in single request handler
-    // res.send("This is the Admins Data");
+//we need to check if the data is Authorized or not
+
+//no 2 data can be defined in single request handler
+// res.send("This is the Admins Data");
 
 // });
 
 ////////////***************************************** */////////////////
-
 
 ////////////------Request route Handler-------///////////
 
@@ -264,7 +218,6 @@ connectDb().then(()=>{
 
 /////////************************************////////
 
-
 /////////--------Route Handling------/////////
 //This is the one way of creating the route handler
 
@@ -284,8 +237,8 @@ connectDb().then(()=>{
 //     console.log("Route Handler1");
 //     // res.send("Route handler 1");
 //     next();
-    
-// }, 
+
+// },
 // (req,res,next)=>{
 //     console.log("Route 2");
 //     // res.send("Route Hanlder 2");
@@ -306,7 +259,6 @@ connectDb().then(()=>{
 
 //////****************************///////////
 
-
 //Here ac and abc will work
 // app.get("/user/:userid/:Password/:name",(req,res)=>{
 //     console.log(req.params);
@@ -322,7 +274,6 @@ connectDb().then(()=>{
 //     })
 // })
 
-
 // app.use("/hello/2" ,(req,res)=>{
 //     res.send("Heelo ji I placed in Google");
 //  });
@@ -331,14 +282,13 @@ connectDb().then(()=>{
 // app.use("/test" ,(req,res)=>{
 //    res.send("Heelo ji from server");
 // });
-  
+
 //This will only get the GET call to /user
 // app.get("/user",(req,res)=>{
 //      res.send({firstname:"Deepanshu",
 //         lastname:"Kohli"
 //      })
 // });
-
 
 /// This will post the /user
 // app.post("/user",(req,res)=>{
@@ -353,9 +303,7 @@ connectDb().then(()=>{
 // app.use("/hello" ,(req,res)=>{
 //     res.send("Heelo ji from Akshay Saini");
 //  });
- 
+
 // app.use("/",(req,res)=>{
 //     res.send("Namaste");
-// }); 
-
-
+// });
