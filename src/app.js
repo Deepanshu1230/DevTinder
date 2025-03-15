@@ -142,7 +142,7 @@ app.use("/",paymentrouter);
 connectDb()
   .then(() => {
     console.log("Database Connection established...");
-    app.listen(process.env.PORT, () => {
+    app.listen(process.env.PORT || 3000, () => {
       console.log("Server is successfully listening the port 3000..");
     });
   })
