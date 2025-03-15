@@ -5,6 +5,7 @@ const Validator = require("./utils/validator");
 const validator = require("validator");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+const PORT = process.env.PORT || 3000;
 
 
 require('dotenv').config();
@@ -142,7 +143,7 @@ app.use("/",paymentrouter);
 connectDb()
   .then(() => {
     console.log("Database Connection established...");
-    app.listen(process.env.PORT || 3000, () => {
+    app.listen(PORT, () => {
       console.log("Server is successfully listening the port 3000..");
     });
   })
