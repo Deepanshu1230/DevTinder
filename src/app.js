@@ -7,8 +7,9 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
 
+require('dotenv').config();
+require("./utils/cronjob");
 
-require('dotenv').config()
 
 
 app.use(
@@ -25,11 +26,13 @@ const authRouter = require("./routers/Auth");
 const requestRouter = require("./routers/request");
 const profileRouter = require("./routers/profile");
 const userRouter = require("./routers/user");
+const paymentrouter=require("./routers/Payment");
 
 app.use("/", authRouter);
 app.use("/", requestRouter);
 app.use("/", profileRouter);
 app.use("/", userRouter);
+app.use("/",paymentrouter);
 
 //Getting the EmailId
 // app.get("/user", async (req,res)=>{
