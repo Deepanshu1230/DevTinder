@@ -15,7 +15,7 @@ require("./utils/cronjob");
 
 app.use(
   cors({
-    origin:process.env.FRONT_URL,
+    origin:https://dev-tinder-front-end-seven.vercel.app,
     credentials: true,
   })
 );
